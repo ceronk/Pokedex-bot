@@ -1,4 +1,5 @@
 require("dotenv").config();
+const fetch = require('node-fetch');
 const { Telegraf, session, Scenes: { Stage, WizardScene } } = require("telegraf");
 const { gen, getData, printData, typeMenu } = require("./templates/templates");
 const bot = new Telegraf(process.env.TOKEN, { handlerTimeout: 420_000 }); // 420s in ms 
