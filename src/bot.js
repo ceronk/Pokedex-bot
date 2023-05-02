@@ -159,20 +159,13 @@ const pokedex = new WizardScene("main menu",
           ctx.deleteMessage();
           ctx.wizard.state.random = ctx.callbackQuery.data;
           let randomId = Math.floor(Math.random() * (lastPokemon - firstPokemon + 1) + firstPokemon);
-          //const pokeAPI = await fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}/`);
-          const pokeAPI = await fetch(`http://localhost:3000/api/random/${randomId}/`);
+          const pokeAPI = await fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}/`);
           if (pokeAPI.status === 404) {
             ctx.reply(`Random pokémon from ${regionName}'s region. 🎲`);
             await ctx.replyWithPhoto({ url: "https://http.cat/404" }, { caption: `Error: Pokémon #${randomId} not found. ❌` });
             return ctx.wizard.steps[2](ctx);
           }
           const data = await pokeAPI.json();
-
-
-          const {sprite, name, id, weight, height, type, ability} = data;
-          return await ctx.replyWithPhoto(sprite, { caption: `${name},${id},${weight},${height},${type},${ability}` });
-
-
           ctx.reply(`Random pokémon from ${regionName}'s region. 🎲`);
           const info = getData(data);
           const src = { source: './src/utils/error.png' }, url = { url: info?.img };
