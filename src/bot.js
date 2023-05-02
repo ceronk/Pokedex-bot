@@ -23,13 +23,13 @@ const pokedex = new WizardScene("main menu",
           ]
         }
       });
-    gifURL = 'https://media.giphy.com/media/93YKeY8qRO94cgQkXl/giphy.gif',
+/*     gifURL = 'https://media.giphy.com/media/93YKeY8qRO94cgQkXl/giphy.gif',
       await bot.telegram.sendAnimation(ctx.chat.id, gifURL,
         {
           type: 'animation',
           caption: `Spiritomb has been doing several misdeeds!\n\nIf you notice something "strange" 👻, you can /leave the session and start a new one.`
         })
-        .then(({ message_id }) => { setTimeout(() => ctx.deleteMessage(message_id), 12000) });
+        .then(({ message_id }) => { setTimeout(() => ctx.deleteMessage(message_id), 12000) }); */
     //Note: I've tried to handle/prevent the menu(s) from being deleted, but I couldn't... yet
 
     //Context: There is a validation that deletes any user messages while the wizard session exists.
@@ -159,13 +159,20 @@ const pokedex = new WizardScene("main menu",
           ctx.deleteMessage();
           ctx.wizard.state.random = ctx.callbackQuery.data;
           let randomId = Math.floor(Math.random() * (lastPokemon - firstPokemon + 1) + firstPokemon);
-          const pokeAPI = await fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}/`);
+          //const pokeAPI = await fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}/`);
+          const pokeAPI = await fetch(`http://localhost:3000/api/random/${randomId}/`);
           if (pokeAPI.status === 404) {
             ctx.reply(`Random pokémon from ${regionName}'s region. 🎲`);
             await ctx.replyWithPhoto({ url: "https://http.cat/404" }, { caption: `Error: Pokémon #${randomId} not found. ❌` });
             return ctx.wizard.steps[2](ctx);
           }
           const data = await pokeAPI.json();
+
+
+          const {sprite, name, id, weight, height, type, ability} = data;
+          return await ctx.replyWithPhoto(sprite, { caption: `${name},${id},${weight},${height},${type},${ability}` });
+
+
           ctx.reply(`Random pokémon from ${regionName}'s region. 🎲`);
           const info = getData(data);
           const src = { source: './src/utils/error.png' }, url = { url: info?.img };
@@ -330,6 +337,61 @@ const pokedex = new WizardScene("main menu",
     }
   }
 );
+
+bot.command("p", async (ctx) => {
+
+  const pokeAPI = await fetch(`http://localhost:3000/api/pokemon-species/mewtwo`);
+  const data = await pokeAPI.json();
+  const {english_name, japanese_name, genus , flavor_text_entries} = data;
+
+
+  
+
+
+  await ctx.reply(`${english_name} | ${japanese_name}
+  
+  ${genus}
+  
+  ${flavor_text_entries}
+  
+  ${data.normal_pokemon.pokeURL}`);
+
+
+
+
+});
+
+bot.command("type", async (ctx) => {
+  await ctx.reply("getting all pokemon");
+  const pokeAPI = await fetch(`http://localhost:3000/api/find-by-type/bug`);
+  const data = await pokeAPI.json();
+  
+  for (let i = 0; i < data.length; i++) {
+    await ctx.replyWithPhoto(data[i].sprite, 
+      { caption: `${data[i].name}\n\nID ${data[i].id}\n\n${data[i].weight}\n\n${data[i].height}\n\n${data[i].type}\n\n${data[i].ability}\n\n${data[i].base_experience}` });
+
+
+
+/*       const info = getData(data);
+      const src = { source: './src/utils/error.png' }, url = { url: info?.img };
+      isImgNull = (info?.img === null) ? src : url;
+      await ctx.replyWithPhoto(isImgNull, { caption: printData(info) }); */
+
+
+  }
+  
+});
+
+bot.command("pokemon", async (ctx) => {
+  await ctx.reply("getting all pokemon");
+  const pokeAPI = await fetch(`http://localhost:3000/api/pokemons`);
+  const data = await pokeAPI.json();
+  
+  for (let i = 0; i < data.length; i++) {
+    await ctx.replyWithPhoto(data[i].sprite, 
+      { caption: `${data[i].name}\n\nID ${data[i].id}\n\n${data[i].weight}\n\n${data[i].height}\n\n${data[i].type}\n\n${data[i].ability}\n\n${data[i].base_experience}` });
+  }  
+});
 //-----------------------------------------------------------------------------------------------------
 const stage = new Stage([pokedex], { sessionName: 'pokedexSession' });
 session({ property: 'pokedexSession', getSessionKey: (ctx) => ctx.chat && ctx.chat.id, });
