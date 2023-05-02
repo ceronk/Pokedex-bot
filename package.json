@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Simple telegram bot",
   "main": "bot.js",
+  "type": "module",
   "scripts": {
     "start": "node src/bot.js",
     "dev": "nodemon src/bot.js"
