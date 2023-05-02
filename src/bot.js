@@ -337,61 +337,6 @@ const pokedex = new WizardScene("main menu",
     }
   }
 );
-
-bot.command("p", async (ctx) => {
-
-  const pokeAPI = await fetch(`http://localhost:3000/api/pokemon-species/mewtwo`);
-  const data = await pokeAPI.json();
-  const {english_name, japanese_name, genus , flavor_text_entries} = data;
-
-
-  
-
-
-  await ctx.reply(`${english_name} | ${japanese_name}
-  
-  ${genus}
-  
-  ${flavor_text_entries}
-  
-  ${data.normal_pokemon.pokeURL}`);
-
-
-
-
-});
-
-bot.command("type", async (ctx) => {
-  await ctx.reply("getting all pokemon");
-  const pokeAPI = await fetch(`http://localhost:3000/api/find-by-type/bug`);
-  const data = await pokeAPI.json();
-  
-  for (let i = 0; i < data.length; i++) {
-    await ctx.replyWithPhoto(data[i].sprite, 
-      { caption: `${data[i].name}\n\nID ${data[i].id}\n\n${data[i].weight}\n\n${data[i].height}\n\n${data[i].type}\n\n${data[i].ability}\n\n${data[i].base_experience}` });
-
-
-
-/*       const info = getData(data);
-      const src = { source: './src/utils/error.png' }, url = { url: info?.img };
-      isImgNull = (info?.img === null) ? src : url;
-      await ctx.replyWithPhoto(isImgNull, { caption: printData(info) }); */
-
-
-  }
-  
-});
-
-bot.command("pokemon", async (ctx) => {
-  await ctx.reply("getting all pokemon");
-  const pokeAPI = await fetch(`http://localhost:3000/api/pokemons`);
-  const data = await pokeAPI.json();
-  
-  for (let i = 0; i < data.length; i++) {
-    await ctx.replyWithPhoto(data[i].sprite, 
-      { caption: `${data[i].name}\n\nID ${data[i].id}\n\n${data[i].weight}\n\n${data[i].height}\n\n${data[i].type}\n\n${data[i].ability}\n\n${data[i].base_experience}` });
-  }  
-});
 //-----------------------------------------------------------------------------------------------------
 const stage = new Stage([pokedex], { sessionName: 'pokedexSession' });
 session({ property: 'pokedexSession', getSessionKey: (ctx) => ctx.chat && ctx.chat.id, });
