@@ -76,4 +76,4 @@ const typeMenu = (ctx) => {
     })
 };
 
-module.exports = { gen, getData, printData, typeMenu };
+export { gen, getData, printData, typeMenu };

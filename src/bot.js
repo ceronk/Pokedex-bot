@@ -1,15 +1,17 @@
-require("dotenv").config();
+import * as dotenv from 'dotenv';
+dotenv.config();
 import fetch from 'node-fetch';
-const { Telegraf, session, Scenes: { Stage, WizardScene } } = require("telegraf");
-const { gen, getData, printData, typeMenu } = require("./templates/templates");
+import { Telegraf, session, Scenes } from "telegraf";
+import { gen, getData, printData, typeMenu } from "./templates/templates.js";
 const bot = new Telegraf(process.env.TOKEN, { handlerTimeout: 420_000 }); // 420s in ms 
-let generation = " ", genName = " ", regionName = " ", firstPokemon = " ", lastPokemon = " ";
+let generation = " ", genName = " ", regionName = " ", firstPokemon = " ", lastPokemon = " ",
+  gifURL = "", jalapeno = "", isImgNull = "", del = "", filteredPoke = "", isNormal = "", pokeURL = "", lol = "";
 
 bot.start(async (ctx) => {
   await ctx.reply(`Welcome to Pokedex bot!🐠\n\nCommands:\n\n/pokedex - Select a pokédex`);
 });
 //-----------------------------------------------------------------------------------------------------
-const pokedex = new WizardScene("main menu",
+const pokedex = new Scenes.WizardScene("main menu",
   //Level 0--------------------------------------------------------------------------------------------
   async (ctx) => {
     del = (ctx?.message?.text == undefined || ctx?.message?.text != '/pokedex') ? " " : ctx.deleteMessage();
@@ -231,7 +233,6 @@ const pokedex = new WizardScene("main menu",
       case undefined: ctx.scene.leave(); return "ctx.wizard.state is undefined";
       //-----------------------------------------------------------------------------------------------
       case "byName":
-        filteredPoke = "";
         if ((ctx.message.text).includes("shiny")) {
           isShiny = ctx.message.text.split(" ");
           isShiny.pop();
@@ -282,7 +283,7 @@ const pokedex = new WizardScene("main menu",
             if (pokeAPI.status === 404) { continue; }
             const data = await pokeAPI.json();
             const info = getData(data);
-            for (j of info?.types) {
+            for (let j of info?.types) {
               if (j === ctx?.callbackQuery?.data) {
                 const src = { source: './src/utils/error.png' }, url = { url: info?.img };
                 isImgNull = (info?.img === null) ? src : url;
@@ -313,7 +314,7 @@ const pokedex = new WizardScene("main menu",
             if (pokeAPI.status === 404) { continue; }
             const data = await pokeAPI.json();
             const info = getData(data);
-            for (j of info?.types) {
+            for (let j of info?.types) {
               if (j === ctx?.callbackQuery?.data) {
                 if (info.imgShiny) {
                   const src = { source: './src/utils/error.png' }, url = { url: info?.imgShiny };
@@ -332,7 +333,7 @@ const pokedex = new WizardScene("main menu",
   }
 );
 //-----------------------------------------------------------------------------------------------------
-const stage = new Stage([pokedex], { sessionName: 'pokedexSession' });
+const stage = new Scenes.Stage([pokedex], { sessionName: 'pokedexSession' });
 session({ property: 'pokedexSession', getSessionKey: (ctx) => ctx.chat && ctx.chat.id, });
 bot.use(session());
 bot.use(stage.middleware());
