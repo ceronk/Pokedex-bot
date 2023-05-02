@@ -23,13 +23,13 @@ const pokedex = new WizardScene("main menu",
           ]
         }
       });
-/*     gifURL = 'https://media.giphy.com/media/93YKeY8qRO94cgQkXl/giphy.gif',
+    gifURL = 'https://media.giphy.com/media/93YKeY8qRO94cgQkXl/giphy.gif',
       await bot.telegram.sendAnimation(ctx.chat.id, gifURL,
         {
           type: 'animation',
           caption: `Spiritomb has been doing several misdeeds!\n\nIf you notice something "strange" 👻, you can /leave the session and start a new one.`
         })
-        .then(({ message_id }) => { setTimeout(() => ctx.deleteMessage(message_id), 12000) }); */
+        .then(({ message_id }) => { setTimeout(() => ctx.deleteMessage(message_id), 12000) });
     //Note: I've tried to handle/prevent the menu(s) from being deleted, but I couldn't... yet
 
     //Context: There is a validation that deletes any user messages while the wizard session exists.
